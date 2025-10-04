@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Main Dashboard</title>
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>Welcome, <%= userName %>!</h1>
+            <nav style="float: right;">
+                <a href="/logout">Logout</a> 
+            </nav>
+        </div>
+    </header>
+    <div class="container">
+
+        <% if (isAdmin) { %>
+            <hr>
+            <h2>🔑 Admin Panel</h2>
+            <h3>Create New Sport</h3>
+            <form action="/admin/create-sport" method="POST" style="margin-bottom: 20px;">
+                <div class="form-group" style="width: 30%; display: inline-block;">
+                    <input type="text" name="sportName" placeholder="e.g., Chess" required>
+                </div>
+                <button type="submit" class="btn btn-secondary">Create Sport</button>
+            </form>
+            <p><a href="/admin/reports">View Past Session Reports</a> (Needs separate route)</p>
+            <hr>
+        <% } %>
+
+        <h2>Create a New Session</h2>
+        <form action="/sessions/create" method="POST">
+            <div class="form-group">
+                <label for="sport">Pick a Sport</label>
+                <select id="sport" name="sport_id" required>
+                    <option value="">-- Select Sport --</option>
+                    <% availableSports.forEach(sport => { %>
+                        <option value="<%= sport %>"><%= sport %></option>
+                    <% }); %>
+                </select>
+            </div>
+            <button type="submit" class="btn">Create Session</button>
+        </form>
+
+        <hr>
+
+        <h2>Your Created Sessions</h2>
+        <% if (createdSessions.length === 0) { %>
+            <p>You haven't created any sessions yet.</p>
+        <% } else { %>
+            <% createdSessions.forEach(session => { %>
+                <div class="session-card">
+                    <strong><%= session.sport %></strong> at <%= session.time %>
+                    <button class="btn" style="background: red;">Cancel</button> 
+                    </div>
+            <% }); %>
+        <% } %>
+
+        <hr>
+
+        <h2>Your Joined Sessions</h2>
+        <% if (joinedSessions.length === 0) { %>
+            <p>You haven't joined any sessions yet.</p>
+        <% } else { %>
+            <% joinedSessions.forEach(session => { %>
+                <div class="session-card">
+                    <strong><%= session.sport %></strong> at <%= session.time %>
+                    </div>
+            <% }); %>
+        <% } %>
+
+        <hr>
+
+        <h2>Available Sessions to Join</h2>
+        <p>This section will list all upcoming sessions where the **Session.start\_time** is in the future. Players can see the details and click a 'Join' button, triggering the **time overlap check** on the server.</p>
+        <div class="session-card">
+            <strong>Basketball</strong> - Tonight @ 7:00 PM
+            <form action="/sessions/join/99" method="POST" style="display: inline;">
+                <button type="submit" class="btn btn-secondary">Join</button>
+            </form>
+        </div>
+
+    </div>
+</body>
+</html>
